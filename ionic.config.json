@@ -1,0 +1,7 @@
+{
+  "name": "tool-runner-frontend",
+  "integrations": {
+    "capacitor": {}
+  },
+  "type": "react"
+}
