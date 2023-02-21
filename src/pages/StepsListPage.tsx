@@ -5,57 +5,30 @@ import { StepPreview } from "@hydrocode/tool-runner"
 import StepsList from "../components/StepsList"
 import { getSteps } from '../backend'
 import { RouteComponentProps } from "react-router"
+import LoadingScreen from "../components/LoadingScreen"
+import ErrorMessage from "../components/ErrorMessage"
 
 
 const StepsListPage: React.FC<RouteComponentProps<{toolName?: string}>> = ({ match }) => {
     const [steps, setSteps] = useState<StepPreview[]>([])
-    const [status, setStatus] = useState<'loading' | 'done'>('loading')
+    const [status, setStatus] = useState<'loading' | 'finished'>('loading')
     const [error, setError] = useState<string>('')
 
     // load the steps 
     useEffect(() => {
+        setStatus('loading')
         getSteps()
             .then(steps => setSteps(steps))
             .catch(err => setError(err))
-            .finally(() => setStatus('done'))
-    }, [])
-
-    // loading
-    if (status === 'loading') {
-        return (
-            <IonGrid style={{height: '100%'}}>
-                    <IonRow style={{height: '100%'}}>
-                        <IonCol className="ion-align-items-center ion-justify-content-center" style={{display: 'flex'}}>
-                            <div style={{display: 'flex', flexDirection: 'column'}} className="ion-align-items-center">
-                                <IonSpinner name="crescent" style={{fontSize: '5rem'}} />
-                                <IonNote style={{marginTop: '0.6rem'}}>The STEP result files are loaded...</IonNote>
-                            </div>
-                        </IonCol>
-                    </IonRow>
-            </IonGrid>
-        )
-    }
-
-    // error rendering
-    if (error != '') {
-        return <>
-            <IonCard color="danger">
-                <IonCardHeader>
-                    <IonCardTitle>Backend error occured</IonCardTitle>
-                    <IonCardContent>
-                        { error }
-                    </IonCardContent>
-                    <IonButton color="light" fill="clear" routerLink="/" routerDirection="root">BACK</IonButton>
-                </IonCardHeader>
-            </IonCard>
-        </>
-    }
+            .finally(() => setStatus('finished'))
+    }, [match.params.toolName])
 
     // render
     return (
         <IonPage>
             <IonContent fullscreen>
-                <StepsList steps={steps} />
+                { status === 'loading' ? <LoadingScreen message="The STEP result files are loaded..." /> : null }
+                { status === 'finished' && error !== '' ? <ErrorMessage message={error} /> : <StepsList steps={steps} /> }
             </IonContent>
         </IonPage>
     ) 
