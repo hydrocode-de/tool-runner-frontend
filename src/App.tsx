@@ -26,6 +26,7 @@ import Home from './pages/Home';
 import ToolPage from './pages/ToolPage';
 import ToolListPage from './pages/ToolListPage';
 import StepsListPage from './pages/StepsListPage';
+import StepPage from './pages/StepPage';
 
 setupIonicReact();
 
@@ -42,11 +43,13 @@ const App: React.FC = () => (
           <ToolListPage />
         </Route>
 
+        <Route exact path="/tools/:toolName/steps" component={StepsListPage} />
+
         <Route exact path="/tools/:toolName/:action" component={ToolPage} />
         
-        <Route exact path="/steps">
-          <StepsListPage />
-        </Route>
+        <Route exact path="/steps" component={StepsListPage} />
+
+        <Route exact path="/steps/:stepName" component={StepPage} />
 
         <Route exact path="/">
           <Redirect to="/tools" />
