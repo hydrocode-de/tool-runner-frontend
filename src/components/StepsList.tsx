@@ -13,7 +13,7 @@ const StepsList: React.FC<{steps: StepPreview[]}> = ({ steps }) => {
             <IonListHeader>Steps</IonListHeader>
 
             { steps.map(step => (
-                <IonItem>
+                <IonItem key={step.name} routerLink={`/steps/${step.name}`} routerDirection="forward" >
                     <IonIcon icon={folder} slot="start" />
                     {  step.created ? (
                         <IonLabel slot="end">

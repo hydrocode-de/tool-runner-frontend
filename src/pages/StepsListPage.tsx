@@ -1,12 +1,13 @@
 import { useEffect, useState } from "react"
-import { IonButton, IonCard, IonCardContent, IonCardHeader, IonCardSubtitle, IonCardTitle, IonCol, IonGrid, IonNote, IonRow, IonSpinner } from "@ionic/react"
+import { IonButton, IonCard, IonCardContent, IonCardHeader, IonCardSubtitle, IonCardTitle, IonCol, IonContent, IonGrid, IonNote, IonPage, IonRow, IonSpinner } from "@ionic/react"
 import { StepPreview } from "@hydrocode/tool-runner"
 
 import StepsList from "../components/StepsList"
 import { getSteps } from '../backend'
+import { RouteComponentProps } from "react-router"
 
 
-const StepsListPage: React.FC = () => {
+const StepsListPage: React.FC<RouteComponentProps<{toolName?: string}>> = ({ match }) => {
     const [steps, setSteps] = useState<StepPreview[]>([])
     const [status, setStatus] = useState<'loading' | 'done'>('loading')
     const [error, setError] = useState<string>('')
@@ -51,10 +52,13 @@ const StepsListPage: React.FC = () => {
     }
 
     // render
-    return <>
-        <StepsList steps={steps} />
-    </>
-
+    return (
+        <IonPage>
+            <IonContent fullscreen>
+                <StepsList steps={steps} />
+            </IonContent>
+        </IonPage>
+    ) 
 }
 
 export default StepsListPage

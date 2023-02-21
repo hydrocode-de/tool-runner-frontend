@@ -1,7 +1,7 @@
 import { ToolConfig } from "@hydrocode/tool-runner"
 import { IonButton, IonCard, IonCardContent, IonCardHeader, IonContent, IonItem, IonPage, IonTitle } from "@ionic/react"
 import { useEffect, useState } from "react"
-import { RouteComponentProps } from "react-router"
+import { Redirect, RouteComponentProps } from "react-router"
 import ToolRun from "../components/ToolRun"
 import { useTools } from "../context/tools"
 
