@@ -1,7 +1,7 @@
 /* Connect to the tool-runner-js backend */
 
 import axios from 'axios';
-import { ToolConfig, listTools } from '@hydrocode/tool-runner'
+import { ToolConfig, StepPreview, StepContent } from '@hydrocode/tool-runner'
 
 // replace this with a Settings, as soon as connecting remote runner is possible
 const API_URL = 'http://localhost:3000';
@@ -14,6 +14,23 @@ export const getTools = (): Promise<ToolConfig[]> => {
         }).catch(err => {
             reject(err)
         })
+    })
+}
+
+export const getSteps = (filter: {toolName?: string} ={}): Promise<StepPreview[]> => {
+    return new Promise((resolve, reject) => {
+        // connect
+        axios.get<{count: number, steps: StepPreview[]}>(`${API_URL}/steps`, {params: filter}).then(res => {
+            resolve(res.data.steps)
+        }).catch(err => reject(err))
+    })
+}
+
+export const getStep = (stepName: string, files?: string[]): Promise<StepContent> => {
+    return new Promise((resolve, reject) => {
+        axios.get<StepContent>(`${API_URL}/steps/${stepName}`, {params: {...(files && {file: files})}}).then(res => {
+            resolve(res.data)
+        }).catch(err => reject(err))
     })
 }
 

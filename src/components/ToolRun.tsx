@@ -170,7 +170,7 @@ const ToolRun: React.FC<{tool: ToolConfig}> = ({ tool }) => {
                     <IonCol className="ion-align-items-center ion-justify-content-center" style={{display: 'flex'}}>
                         <div style={{display: 'flex', flexDirection: 'column'}} className="ion-align-items-center">
                             <IonSpinner name="crescent" style={{fontSize: '5rem'}} />
-                            <IonNote>The tool is currently running</IonNote>
+                            <IonNote style={{marginTop: '0.6rem'}}>The tool is currently running</IonNote>
                         </div>
                     </IonCol>
                 </IonRow>
