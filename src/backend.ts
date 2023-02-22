@@ -20,7 +20,7 @@ export const getTools = (): Promise<ToolConfig[]> => {
 export const getSteps = (filter: {toolName?: string} ={}): Promise<StepPreview[]> => {
     return new Promise((resolve, reject) => {
         // connect
-        axios.get<{count: number, steps: StepPreview[]}>(`${API_URL}/steps`).then(res => {
+        axios.get<{count: number, steps: StepPreview[]}>(`${API_URL}/steps`, {params: filter}).then(res => {
             resolve(res.data.steps)
         }).catch(err => reject(err))
     })
