@@ -4,14 +4,17 @@ import App from './App';
 import * as serviceWorkerRegistration from './serviceWorkerRegistration';
 import reportWebVitals from './reportWebVitals';
 import { ToolsProvider } from './context/tools';
+import { SettingsProvider } from './context/settings';
 
 const container = document.getElementById('root');
 const root = createRoot(container!);
 root.render(
   <React.StrictMode>
-    <ToolsProvider>
-      <App />
-    </ToolsProvider>
+    <SettingsProvider>
+      <ToolsProvider>
+        <App />
+      </ToolsProvider>
+    </SettingsProvider>
   </React.StrictMode>
 );
 
