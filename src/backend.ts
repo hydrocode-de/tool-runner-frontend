@@ -1,10 +1,19 @@
 /* Connect to the tool-runner-js backend */
 
 import axios from 'axios';
-import { ToolConfig, StepPreview, StepContent } from '@hydrocode/tool-runner'
+import { ToolConfig, StepPreview, StepContent, DockerHealth } from '@hydrocode/tool-runner'
 
 // replace this with a Settings, as soon as connecting remote runner is possible
 const API_URL = 'http://localhost:3000';
+export type BACKEND_STATUS = 'online' | 'offline' | 'nodocker'
+
+export const healthCheck = async (backendUrl: string): Promise<BACKEND_STATUS> => {
+    const status = await axios.get<DockerHealth>(`${backendUrl}/healthz`)
+        .then(res => res.data.running ? 'online' : 'nodocker')
+        .catch(() => 'offline')
+
+    return new Promise(resolve => resolve(status as BACKEND_STATUS))
+}
 
 export const getTools = (): Promise<ToolConfig[]> => {
     return new Promise((resolve, reject) => {
