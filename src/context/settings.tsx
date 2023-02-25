@@ -1,13 +1,25 @@
-import React, { createContext, useContext, useState } from "react"
+import React, { createContext, useContext, useEffect, useState } from "react"
+import { getPlatforms } from "@ionic/react"
+
+import { healthCheck, BACKEND_STATUS } from '../backend'
+import { useInterval } from '../hooks/interval'
+
+
+export type PLATFORM = ReturnType<typeof getPlatforms>[0]
+
 
 interface SettingsState {
     backendUrl: string,
-    backendOnline: boolean
+    backendStatus: BACKEND_STATUS,
+    platforms: PLATFORM[],
+    status: 'checking' | 'pending'
 }
 
 const initialState: SettingsState = {
     backendUrl: 'http://localhost:3000',
-    backendOnline: false
+    backendStatus: 'offline',
+    platforms: getPlatforms(),
+    status: 'pending'
 }
 
 // build the context
@@ -16,12 +28,31 @@ const SettingsContext = createContext(initialState)
 export const SettingsProvider: React.FC<React.PropsWithChildren> = ({ children }) => {
     // context state
     const [backendUrl, setBackendUrl] = useState<string>(initialState.backendUrl)
-    const [backendOnline, setBackendOnline] = useState<boolean>(initialState.backendOnline)
-    
+    const [backendStatus, setBackendStatus] = useState<BACKEND_STATUS>(initialState.backendStatus)
+    const [status, setStatus] = useState<'checking' | 'pending'>(initialState.status)
+
+    // check if the backend is there
+    useEffect(() => {
+        setStatus('checking')
+        healthCheck(backendUrl).then(status => setBackendStatus(status))
+        .finally(() => setStatus('pending'))
+    }, [backendUrl])
+
+    // setup a status checker
+    useInterval(() => {
+        console.log('checking...')
+        setStatus('checking')
+        healthCheck(backendUrl)
+            .then(status => status !== backendStatus ? setBackendStatus(status) : null)
+            .finally(() => setStatus('pending'))
+    }, backendStatus === 'online' ? 60 * 1000 : 1000)
+
     // build the context value
     const value = {
         backendUrl,
-        backendOnline
+        backendStatus,
+        status,
+        platforms: initialState.platforms
     }
 
     // return 
