@@ -27,36 +27,41 @@ import ToolPage from './pages/ToolPage';
 import ToolListPage from './pages/ToolListPage';
 import StepsListPage from './pages/StepsListPage';
 import StepPage from './pages/StepPage';
+import BackendStatusSwitch from './components/BackendStatusSwitch';
 
 setupIonicReact();
 
 const App: React.FC = () => (
   <IonApp>
-    <IonReactRouter>
-      <IonRouterOutlet>
+    {/* <BackendStatusSwitch> */}
+      <IonReactRouter>
+        <BackendStatusSwitch>
+        <IonRouterOutlet>
+          
+          <Route exact path="/home">
+            <Home />
+          </Route>
+
+          <Route exact path="/tools">
+            <ToolListPage />
+          </Route>
+
+          <Route exact path="/tools/:toolName/steps" component={StepsListPage} />
+
+          <Route exact path="/tools/:toolName/:action" component={ToolPage} />
+          
+          <Route exact path="/steps" component={StepsListPage} />
+
+          <Route exact path="/steps/:stepName" component={StepPage} />
+
+          <Route exact path="/">
+            <Redirect to="/tools" />
+          </Route>
         
-        <Route exact path="/home">
-          <Home />
-        </Route>
-
-        <Route exact path="/tools">
-          <ToolListPage />
-        </Route>
-
-        <Route exact path="/tools/:toolName/steps" component={StepsListPage} />
-
-        <Route exact path="/tools/:toolName/:action" component={ToolPage} />
-        
-        <Route exact path="/steps" component={StepsListPage} />
-
-        <Route exact path="/steps/:stepName" component={StepPage} />
-
-        <Route exact path="/">
-          <Redirect to="/tools" />
-        </Route>
-      
-      </IonRouterOutlet>
-    </IonReactRouter>
+        </IonRouterOutlet>
+        </BackendStatusSwitch>
+      </IonReactRouter>
+    {/* </BackendStatusSwitch> */}
   </IonApp>
 );
 
