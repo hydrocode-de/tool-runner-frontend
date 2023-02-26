@@ -1,5 +1,4 @@
-import { Redirect, Route } from 'react-router-dom';
-import { IonApp, IonRouterOutlet, setupIonicReact } from '@ionic/react';
+import { IonApp, setupIonicReact } from '@ionic/react';
 import { IonReactRouter } from '@ionic/react-router';
 
 /* Core CSS required for Ionic components to work properly */
@@ -21,47 +20,20 @@ import '@ionic/react/css/display.css';
 /* Theme variables */
 import './theme/variables.css';
 
-// load the different pages
-import Home from './pages/Home';
-import ToolPage from './pages/ToolPage';
-import ToolListPage from './pages/ToolListPage';
-import StepsListPage from './pages/StepsListPage';
-import StepPage from './pages/StepPage';
 import BackendStatusSwitch from './components/BackendStatusSwitch';
+import Navigation from './Navigation';
 
 setupIonicReact();
 
 const App: React.FC = () => (
   <IonApp>
-    {/* <BackendStatusSwitch> */}
       <IonReactRouter>
         <BackendStatusSwitch>
-        <IonRouterOutlet>
-          
-          <Route exact path="/home">
-            <Home />
-          </Route>
-
-          <Route exact path="/tools">
-            <ToolListPage />
-          </Route>
-
-          <Route exact path="/tools/:toolName/steps" component={StepsListPage} />
-
-          <Route exact path="/tools/:toolName/:action" component={ToolPage} />
-          
-          <Route exact path="/steps" component={StepsListPage} />
-
-          <Route exact path="/steps/:stepName" component={StepPage} />
-
-          <Route exact path="/">
-            <Redirect to="/tools" />
-          </Route>
-        
-        </IonRouterOutlet>
+          <Navigation />
+          {/* <h1>We are online</h1> */}
         </BackendStatusSwitch>
       </IonReactRouter>
-    {/* </BackendStatusSwitch> */}
+
   </IonApp>
 );
 

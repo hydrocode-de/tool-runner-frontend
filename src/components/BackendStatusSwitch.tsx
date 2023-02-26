@@ -10,6 +10,7 @@ const BackendStatusSwitch: React.FC<React.PropsWithChildren> = ({ children }) =>
     const { backendStatus, backendUrl, status } = useSettings()
     
     if (backendStatus === 'online') {
+        //return children
         return <>{ children }</>
     }
 

@@ -1,10 +1,10 @@
 import { ToolConfig } from "@hydrocode/tool-runner";
 import { IonButton, IonCol, IonGrid, IonInput, IonItem, IonLabel, IonList, IonNote, IonRow, IonSelect, IonSelectOption, IonSpinner } from "@ionic/react";
 import { useEffect, useState } from "react";
+import { useHistory } from "react-router";
 
 import { run } from '../backend'
 
-const { REACT_APP_STEP_FOLDER } = process.env
 
 // with > v0.2.3 this is exported by tool-runner
 interface ParameterConfig {
@@ -112,6 +112,9 @@ const ToolRun: React.FC<{tool: ToolConfig}> = ({ tool }) => {
     const [status, setStatus] = useState<'pending' | 'invalid' | 'running' | 'finished' | 'errored'>('invalid')
     const [message, setMessage] = useState<string>('')
 
+    // load the history package
+    const history = useHistory()
+
     // callback function to update the args
     const updateArgs = (key: string, value: any) => {
         const newArgs = {...args}
@@ -124,13 +127,21 @@ const ToolRun: React.FC<{tool: ToolConfig}> = ({ tool }) => {
         // set stauts
         setStatus('running')
         
-        // setting the path here, should be moved to the server
-        run(tool, {...args, resultPath: REACT_APP_STEP_FOLDER}).then(output => {
+        // run - this is the sync option. Keep this handler for the async option
+        run(tool, {...args}).then(output => {
             setMessage(output)
             setStatus('finished')
         })
 
     }
+
+    // check for the status being 'finished'
+    useEffect(() => {
+        if (status === 'finished') {
+            // TODO - this is not great, as message is the file name right now
+            history.push(`/steps/${message}`)
+        }
+    }, [status])
 
     // check the args as they have been updated
     useEffect(() => {

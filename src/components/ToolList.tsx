@@ -15,7 +15,7 @@ const ToolList: React.FC = () => {
                 <IonItem color="danger">
                     <IonLabel className="ion-text-wrap">
                         <h1>An Error occured</h1>
-                        <p>{ lastError }</p>
+                        <p>{ lastError ? `${lastError}` : 'No Error was captured. That is weird.'  }</p>
                     </IonLabel>
                 </IonItem>
             ) : null }

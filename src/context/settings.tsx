@@ -45,7 +45,7 @@ export const SettingsProvider: React.FC<React.PropsWithChildren> = ({ children }
         healthCheck(backendUrl)
             .then(status => status !== backendStatus ? setBackendStatus(status) : null)
             .finally(() => setStatus('pending'))
-    }, backendStatus === 'online' ? 60 * 1000 : 1000)
+    }, backendStatus === 'online' ? 1000 : 1000)
 
     // build the context value
     const value = {

@@ -1,6 +1,7 @@
 import { ToolConfig } from "@hydrocode/tool-runner";
 import React, { createContext, useContext, useEffect, useState } from "react";
 import { getTools } from "../backend";
+import { useSettings } from "./settings";
 
 interface ToolsState {
     tools: ToolConfig[],
@@ -23,9 +24,13 @@ export const ToolsProvider: React.FC<React.PropsWithChildren> = ({ children }) =
     const [status, setStatus] = useState<typeof initialState.status>(initialState.status)
     const [lastError, setLastError] = useState<string>(initialState.lastError)
     
+    // get the backend status
+    const { backendStatus } = useSettings()
+
     // load the tools on first load
     useEffect(() => {
-        getTools()
+        if (backendStatus === 'online') {
+            getTools()
             .then(tools => {
                 setTools(tools)
                 setStatus('pending')
@@ -34,7 +39,8 @@ export const ToolsProvider: React.FC<React.PropsWithChildren> = ({ children }) =
                 setStatus('errored')
                 setLastError(err)
             })
-    }, [])
+        }
+    }, [backendStatus])
 
     // build the context value
     const value = {
