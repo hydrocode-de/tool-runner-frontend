@@ -38,7 +38,7 @@ export const getSteps = (filter: {toolName?: string} ={}): Promise<StepPreview[]
 export const getStep = (stepName: string, files?: string[]): Promise<StepContent> => {
     return new Promise((resolve, reject) => {
         axios.get<StepContent>(`${API_URL}/steps/${stepName}`, {params: {...(files && {file: files})}}).then(res => {
-            resolve(res.data)
+            resolve({...res.data, metadata: {...res.data.metadata, stepName}})
         }).catch(err => reject(err))
     })
 }
