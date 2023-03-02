@@ -36,7 +36,15 @@ const ParamInput: React.FC<ParamInputProps> = ({ name, param, onUpdate }) => {
             fs.onload = e => {
                 if (e.target) {
                     const { result } = e.target
-                    resolve(result as string)
+
+                    // rebuild the data-url
+                    const b64 = (result as string).split(';base64,').pop() 
+                    const mime = file.name.split('.').slice(1).join('.')
+
+                    // this is a bit messy
+                    const type = ['txt', 'csv', 'dat', 'html'].includes(mime) ? 'text' : 'application'
+
+                    resolve(`data:${type}/${mime};base64,${b64}`)
                 } else {
                     reject('No file loaded')
                 }

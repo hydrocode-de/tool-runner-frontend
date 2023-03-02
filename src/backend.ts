@@ -45,8 +45,13 @@ export const getStep = (stepName: string, files?: string[]): Promise<StepContent
 
 export const run = (tool: ToolConfig, args: any): Promise<string> => {
     return new Promise((resolve, reject) => {
-        axios.get<{message: string, output: string}>(`${API_URL}/tools/${tool.name}/run`, {params: args}).then(res => {
-            resolve(res.data.output)
-        }).catch(err => reject(err))
+        // axios.get<{message: string, output: string}>(`${API_URL}/tools/${tool.name}/run`, {params: args}).then(res => {
+        //     resolve(res.data.output)
+        // }).catch(err => reject(err))
+        axios.post<{message: string, output: string}>(`${API_URL}/tools/${tool.name}/run`, args)
+            .then(res => {
+                resolve(res.data.output)
+            })
+            .catch(err => reject(err))
     })
 }

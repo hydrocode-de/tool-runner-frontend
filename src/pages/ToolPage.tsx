@@ -1,5 +1,5 @@
 import { StepPreview, ToolConfig } from "@hydrocode/tool-runner"
-import { IonButton, IonCard, IonCardContent, IonCardHeader, IonContent, IonItem, IonPage, IonTitle } from "@ionic/react"
+import { IonBackButton, IonButton, IonButtons, IonCard, IonCardContent, IonCardHeader, IonContent, IonHeader, IonItem, IonPage, IonTitle, IonToolbar, isPlatform } from "@ionic/react"
 import { useEffect, useState } from "react"
 import { Redirect, RouteComponentProps } from "react-router"
 import { getSteps } from "../backend"
@@ -59,28 +59,21 @@ const ToolPage: React.FC<RouteComponentProps<{toolName: string, action: string}>
         }
     }, [action])
 
-    // render the component if there was an error
-    if (error) {
-        return <>
-            <IonPage>
-                <IonContent className="ion-padding" fullscreen>
-                    <IonCard color="danger">
-                        <IonCardHeader>
-                            <IonTitle>An error occured</IonTitle>
-                        </IonCardHeader>
-                        <IonCardContent>
-                            { error }
-                        </IonCardContent>
-                        <IonButton fill="outline" routerLink="/home" color="dark">Back to List</IonButton>
-                    </IonCard>
-                </IonContent>
-            </IonPage>
-        </>
-    }
-
     // otherwise render the actual page
     return <>
         <IonPage>
+
+            { isPlatform('electron') ? null : (
+                <IonHeader>
+                    <IonToolbar>
+                        <IonButtons slot="start">
+                            <IonBackButton />
+                        </IonButtons>
+                        <IonTitle>{ tool ? tool.title : 'Waiting...' }</IonTitle>
+                    </IonToolbar>
+                </IonHeader>
+            )}
+
             <IonContent fullscreen>
                 { status === 'loading' ? <LoadingScreen message="Talking to your Docker daemon. Seems to be a nice guy..." /> : null }
                 { status === 'errored' ? <ErrorMessage message={error} /> : null }
