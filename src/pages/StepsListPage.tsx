@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react"
-import { IonButton, IonCard, IonCardContent, IonCardHeader, IonCardSubtitle, IonCardTitle, IonCol, IonContent, IonGrid, IonNote, IonPage, IonRow, IonSpinner } from "@ionic/react"
+import { IonBackButton, IonButton, IonButtons, IonCard, IonCardContent, IonCardHeader, IonCardSubtitle, IonCardTitle, IonCol, IonContent, IonGrid, IonHeader, IonNote, IonPage, IonRow, IonSpinner, IonTitle, IonToolbar, isPlatform } from "@ionic/react"
 import { StepPreview } from "@hydrocode/tool-runner"
 
 import StepsList from "../components/StepsList"
@@ -26,6 +26,18 @@ const StepsListPage: React.FC<RouteComponentProps<{toolName?: string}>> = ({ mat
     // render
     return (
         <IonPage>
+
+            { isPlatform('electron') ? null : (
+                <IonHeader>
+                    <IonToolbar>
+                        <IonButtons slot="start">
+                            <IonBackButton />
+                        </IonButtons>
+                        <IonTitle>Result files</IonTitle>
+                    </IonToolbar>
+                </IonHeader>
+            ) }
+
             <IonContent fullscreen>
                 { status === 'loading' ? <LoadingScreen message="The STEP result files are loaded..." /> : null }
                 { status === 'finished' && error !== '' ? <ErrorMessage message={error} /> : <StepsList steps={steps} /> }

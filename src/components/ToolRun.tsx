@@ -1,5 +1,5 @@
 import { ToolConfig } from "@hydrocode/tool-runner";
-import { IonButton, IonCol, IonGrid, IonInput, IonItem, IonLabel, IonList, IonNote, IonRow, IonSelect, IonSelectOption, IonSpinner } from "@ionic/react";
+import { IonAccordion, IonAccordionGroup, IonButton, IonCol, IonGrid, IonInput, IonItem, IonLabel, IonList, IonNote, IonRow, IonSelect, IonSelectOption, IonSpinner, IonTitle, IonToggle } from "@ionic/react";
 import { useEffect, useState } from "react";
 import { useHistory } from "react-router";
 
@@ -21,10 +21,11 @@ interface ParameterConfig {
 interface ParamInputProps {
     name: string,
     param: ParameterConfig,
+    args: {[key: string]: any},
     onUpdate: (key: string, value: any) => void
 }
 
-const ParamInput: React.FC<ParamInputProps> = ({ name, param, onUpdate }) => {
+const ParamInput: React.FC<ParamInputProps> = ({ name, param, args, onUpdate }) => {
     let input: JSX.Element;
     const [error, setError] = useState<string>('')
 
@@ -63,7 +64,7 @@ const ParamInput: React.FC<ParamInputProps> = ({ name, param, onUpdate }) => {
                 })
                 .catch(err => setError(err))
         } else {
-            if (value) {
+            if (value || param.type === 'bool') {
                 setError('')
                 onUpdate(name, value)
             } else {
@@ -77,14 +78,14 @@ const ParamInput: React.FC<ParamInputProps> = ({ name, param, onUpdate }) => {
     // render the correct input element
     switch (param.type) {
         case 'integer':
-            input = <IonInput type="number" step="1" {...{min: param.min, max: param.max}} onIonChange={e => updateHandler(Number(e.target.value))} />
+            input = <IonInput type="number" step="1" {...{min: param.min, max: param.max}} onIonChange={e => updateHandler(Number(e.target.value))} value={args[name]} />
             break;
         case 'float':
-            input = <IonInput type="number" step="0.1" {...{min: param.min, max: param.max}} onIonChange={e => updateHandler(Number(e.target.value))} />
+            input = <IonInput type="number" step="0.1" {...{min: param.min, max: param.max}} onIonChange={e => updateHandler(Number(e.target.value))} value={args[name]} />
             break;
         case 'enum':
             input = (
-                <IonSelect onIonChange={e => updateHandler(e.target.value)}>
+                <IonSelect onIonChange={e => updateHandler(e.target.value)} value={args[name]}>
                     { param.values?.map(v => <IonSelectOption key={v} value={v}>{ v }</IonSelectOption>) }
                 </IonSelect>
             )
@@ -99,8 +100,12 @@ const ParamInput: React.FC<ParamInputProps> = ({ name, param, onUpdate }) => {
                 input = <input type="file" onChange={e => updateHandler(e.target.files![0])} />
             }
             break;
+        case 'bool':
+            input = <IonToggle slot="end" onIonChange={e => updateHandler(Boolean(e.target.checked))} value={args[name] || false} />
+            // input = <IonToggle slot="end" onIonChange={e => console.log(e.target.checked)} />
+            break;
         default:
-            input = <IonInput type="text" onIonChange={e => updateHandler(e.target.value)} />
+            input = <IonInput type="text" value={args[name]} onIonChange={e => updateHandler(e.target.value)} />
             break;
     }
 
@@ -115,8 +120,10 @@ const ParamInput: React.FC<ParamInputProps> = ({ name, param, onUpdate }) => {
 
 
 const ToolRun: React.FC<{tool: ToolConfig}> = ({ tool }) => {
+    // transform 
+    const opt = Object.fromEntries(Object.entries(tool.parameters).filter(([_, param]) => param.default).map(([parName, param]) => [parName, param.default]))
     // create a state to store the args
-    const [args, setArgs] = useState<{[key: string]: any}>({})
+    const [args, setArgs] = useState<{[key: string]: any}>(opt)
     const [status, setStatus] = useState<'pending' | 'invalid' | 'running' | 'finished' | 'errored'>('invalid')
     const [message, setMessage] = useState<string>('')
 
@@ -168,17 +175,40 @@ const ToolRun: React.FC<{tool: ToolConfig}> = ({ tool }) => {
     if (status === 'pending' || status === 'invalid') {
         return <>
             <IonList>
-                { Object.entries(tool.parameters).map(([parName, param]) => {
+                { Object.entries(tool.parameters)
+                    .filter(([_, param]) => !param.optional)
+                    .map(([parName, param]) => {
                     return (
                         <IonItem key={parName}>
                             <IonLabel position="fixed">{ parName }</IonLabel>
-                            <ParamInput name={parName} param={param} onUpdate={updateArgs} />
+                            <ParamInput name={parName} param={param} onUpdate={updateArgs} args={args} />
                         </IonItem>
                     )
                 }) }
+            </IonList>
+            
+            <IonAccordionGroup>
+                <IonAccordion>
+                    <IonItem slot="header">
+                        <IonTitle>Optional Arguments</IonTitle>
+                    </IonItem>
+                    <IonList slot="content">
+                        { Object.entries(tool.parameters)
+                            .filter(([_, param]) => param.optional)
+                            .map(([parName, param]) => {
+                                return (
+                                    <IonItem key={parName}>
+                                        <IonLabel position="fixed">{ parName }</IonLabel>
+                                        <ParamInput name={parName} param={param} onUpdate={updateArgs} args={args} />
+                                    </IonItem>
+                                )
+                            }) }
+                    </IonList>
+                </IonAccordion>
+            </IonAccordionGroup>
 
                 <IonButton fill="solid" expand="full" color="success" disabled={status==='invalid'} onClick={startTool}>RUN</IonButton>
-            </IonList>
+            
         </>
     }
 

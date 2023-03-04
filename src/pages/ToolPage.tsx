@@ -69,7 +69,10 @@ const ToolPage: React.FC<RouteComponentProps<{toolName: string, action: string}>
                         <IonButtons slot="start">
                             <IonBackButton />
                         </IonButtons>
-                        <IonTitle>{ tool ? tool.title : 'Waiting...' }</IonTitle>
+                        <IonTitle>
+                            {action === 'run' ? 'RUN - ': null}{ tool ? tool.title : 'Waiting...' }
+                            {action === 'steps' ? ' - Results' : null}
+                        </IonTitle>
                     </IonToolbar>
                 </IonHeader>
             )}

@@ -1,5 +1,5 @@
 import { StepContent } from "@hydrocode/tool-runner";
-import { IonButton, IonCard, IonCardContent, IonCardHeader, IonCardTitle, IonCol, IonContent, IonGrid, IonNote, IonPage, IonRow, IonSpinner } from "@ionic/react";
+import { IonBackButton, IonButton, IonButtons, IonCard, IonCardContent, IonCardHeader, IonCardTitle, IonCol, IonContent, IonGrid, IonHeader, IonNote, IonPage, IonRow, IonSpinner, IonTitle, IonToolbar, isPlatform } from "@ionic/react";
 import { useEffect, useState } from "react";
 import { RouteComponentProps } from "react-router";
 
@@ -28,6 +28,18 @@ const StepPage: React.FC<RouteComponentProps<{toolName?: string, stepName: strin
 
     return (
         <IonPage>
+
+            { isPlatform('electron') ? null : (
+                <IonHeader>
+                    <IonToolbar>
+                        <IonButtons slot="start">
+                            <IonBackButton />
+                        </IonButtons>
+                        <IonTitle>Result</IonTitle>
+                    </IonToolbar>
+                </IonHeader>
+            ) }
+
             <IonContent fullscreen>
                 { status === 'loading' ? <LoadingScreen message="The results are loaded from the backend..." /> : null }
                 { status === 'finished' && error !== '' ? <ErrorMessage message={error}/> : null }
